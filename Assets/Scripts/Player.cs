@@ -24,14 +24,17 @@ public class Player : MonoBehaviour {
 
     GroundChecker groundChecker;
 
+    GameObject foot;
 
     void Awake() {
+        foot = transform.GetChild(0).gameObject;
+
         rigid = GetComponent<Rigidbody2D>();
         groundChecker = GetComponent<GroundChecker>();
 
         inputActions = new RecolorsInputAction();
 
-        inputActions.Player.Jump.started += JumpStarted; ;
+        inputActions.Player.Jump.started += JumpStarted;
     }
 
     void OnDisable() => inputActions.Disable();
@@ -41,10 +44,17 @@ public class Player : MonoBehaviour {
 
 
     void Update() {
+        //‰º‚É‚·‚è”²‚¯‚é—p
+        var value = inputActions.Player.Move.ReadValue<Vector2>();
+        var active=value.y > -0.8f;
 
+        if (foot.activeSelf != active) {
+            foot.SetActive(active);
+        }
 
     }
 
+    //ƒWƒƒƒ“ƒv
     private void JumpStarted(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
         if (groundChecker.IsGround) {
             rigid.AddForce(new Vector2(0, jump), ForceMode2D.Impulse);
@@ -53,6 +63,7 @@ public class Player : MonoBehaviour {
 
 
     void FixedUpdate() {
+        //‰¡ˆÚ“®
         var value = inputActions.Player.Move.ReadValue<Vector2>();
 
         var move = new Vector2(value.x * speed , 0);
