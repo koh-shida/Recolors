@@ -18,9 +18,6 @@ public class ColorObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // ƒ^ƒO‚ğ•ÏX
-        tag = "ColorObject";
-
         havingColor = true;
     }
 

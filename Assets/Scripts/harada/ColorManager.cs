@@ -31,27 +31,24 @@ public class ColorManager : MonoBehaviour
         }
 
         // 色付きのオブジェクトを探して各リストに格納
-        var list_GameObject = new List<GameObject>();
-        list_GameObject.AddRange(GameObject.FindGameObjectsWithTag("ColorObject"));
+        var list_GameObject = new List<ColorObject>();
+        list_GameObject.AddRange(GameObject.FindObjectsOfType<ColorObject>());
 
-        for (var i = 0; i < (int)Color_Type.c_Max - 1; ++i)
+        for (var i = 0; i < (int)Color_Type.c_Max; ++i)
         {
             for (var j = 0; j < list_GameObject.Count; ++j)
             {
-                var its_color = list_GameObject[j].GetComponent<ColorObject>();
-
-                // 取得できたかチェック
-                if (its_color != null)
+                // 色のタイプを取得、比較
+                if (i == (int)list_GameObject[j].GetColorType())
                 {
-                    // 色のタイプを取得、比較
-                    if (i == (int)its_color.GetColorType())
-                    {
-                        // リストに追加
-                        array_listColors[i].Add(its_color);
-                    }
+                    // リストに追加
+                    array_listColors[i].Add(list_GameObject[j]);
                 }
             }
+
+            Debug.Log("" + array_listColors[i].Count);
         }
+
     }
 
     // Update is called once per frame
@@ -60,14 +57,14 @@ public class ColorManager : MonoBehaviour
 
     }
 
-    // 特定の色を白黒に変更
+    // 特定の色を白黒に変更する処理
     public void TurnMonochrome(Color_Type color)
     {
         // 白黒に変更する色
         var c_num = (int)color;
 
         // iは色に対応する数字
-        for (var i = 0; i < (int)Color_Type.c_Max - 1; ++i)
+        for (var i = 0; i < (int)Color_Type.c_Max; ++i)
         {
             if (c_num == i)
             {
@@ -81,13 +78,14 @@ public class ColorManager : MonoBehaviour
         }
     }
 
+    // 色を復活させる処理
     public void RecoverColor(Color_Type color)
     {
         // 復活させる色
         var c_num = (int)color;
 
         // iは色に対応する数字
-        for (var i = 0; i < (int)Color_Type.c_Max - 1; ++i)
+        for (var i = 0; i < (int)Color_Type.c_Max; ++i)
         {
             if (c_num == i)
             {
