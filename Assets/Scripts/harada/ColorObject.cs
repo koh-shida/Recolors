@@ -12,6 +12,8 @@ public class ColorObject : MonoBehaviour
     [SerializeField]
     ColorManager.Color_Type MyColor;
 
+    Renderer Ren_color;
+
     // F‚ğ‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©AŠO•”‚©‚çæ“¾
     bool havingColor;
 
@@ -19,6 +21,9 @@ public class ColorObject : MonoBehaviour
     void Start()
     {
         havingColor = true;
+
+        Ren_color = gameObject.GetComponent<Renderer>();
+        Ren_color.material.color = ColorManager.GetOriginalColor(MyColor);
     }
 
     // Update is called once per frame
@@ -42,10 +47,14 @@ public class ColorObject : MonoBehaviour
     public void TurnOnColor()
     {
         havingColor = true;
+
+        Ren_color.material.color = ColorManager.GetOriginalColor(MyColor);
     }
 
     public void TurnOffColor()
     {
         havingColor = false;
+
+        Ren_color.material.color = ColorManager.GetWhite();
     }
 }
