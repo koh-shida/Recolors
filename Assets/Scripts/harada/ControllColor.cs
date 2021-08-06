@@ -92,6 +92,7 @@ public class ControllColor : MonoBehaviour
                     break;
                 }
 
+                // –³ŒÀƒ‹[ƒv‘Îô
                 if (j > (int)ColorManager.Color_Type.c_Max)
                 {
                     break;
