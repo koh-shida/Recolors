@@ -30,6 +30,6 @@ public class GrabedObject : MonoBehaviour
     public void GrabEnd() {
         IsGrab = false;
         graber = null;
-        rig.constraints = RigidbodyConstraints2D.FreezeAll;
+        rig.constraints = RigidbodyConstraints2D.FreezeRotation|RigidbodyConstraints2D.FreezePositionX;
     }
 }
