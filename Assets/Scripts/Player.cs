@@ -36,6 +36,8 @@ public class Player : MonoBehaviour {
 
     Renderer rend;
 
+    GrabedObject grabedObject;
+
     void Awake() {
         respawnPos = transform.position;
         camera_respawnPos = Camera.main.transform.position;
@@ -54,12 +56,20 @@ public class Player : MonoBehaviour {
         inputActions.Player.Jump.started += JumpStarted;
         inputActions.Player.UseAbility.started += UseAbilityStarted;
         inputActions.Player.UseAbility.canceled += UseAbilityCanceled;
-        //inputActions.Player.
+        inputActions.Player.Grab.started += GrabStarted;
+        inputActions.Player.Grab.canceled += GrabCanceled; ;
 
         con_color = GetComponent<ControllColor>();
         con_color.SetInputActions(inputActions);
     }
 
+    private void GrabCanceled(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        grabedObject?.GrabEnd();
+    }
+
+    private void GrabStarted(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        grabedObject?.GrabBegin(GetComponent<Rigidbody2D>());
+    }
 
     private void Start() {
         manager = GameObject.Find("GameMaster").GetComponent<ColorManager>();
@@ -71,7 +81,7 @@ public class Player : MonoBehaviour {
         }
         switch (current) {
             case ColorManager.Color_Type.Blue:
-                var scale=transform.localScale;
+                var scale = transform.localScale;
                 scale.y = 0.3f;
                 transform.localScale = scale;
                 break;
@@ -127,7 +137,7 @@ public class Player : MonoBehaviour {
     void Update() {
         //â∫Ç…Ç∑ÇËî≤ÇØÇÈóp
         var value = inputActions.Player.Move.ReadValue<Vector2>();
-        var active=value.y > -0.8f;
+        var active = value.y > -0.8f;
 
         if (foot.activeSelf != active) {
             foot.SetActive(active);
@@ -147,13 +157,16 @@ public class Player : MonoBehaviour {
         //â°à⁄ìÆ
         var value = inputActions.Player.Move.ReadValue<Vector2>();
 
-        var move = new Vector2(value.x * speed , 0);
+        if (grabedObject!=null&& grabedObject.IsGrab) {
+            grabedObject.GrabMove( new Vector2(value.x/10.0f, 0));
+            return;
+        }
+        var move = new Vector2(value.x * speed, 0);
 
         var moveForce = speedFollowing * (move - rigid.velocity);
         moveForce.y = 0;
 
         rigid.AddForce(moveForce);
-
     }
 
     void Death() {
@@ -163,19 +176,31 @@ public class Player : MonoBehaviour {
 
 
     private void OnTriggerEnter2D(Collider2D collision) {
-        var colorObj=collision.GetComponent<ColorObject>();
+        var colorObj = collision.GetComponent<ColorObject>();
         if (colorObj != null) {
-            current = colorObj.GetColorType();
-            manager.TurnMonochrome(current);
-            rend.material.color = ColorManager.GetOriginalColor(current);
-            isColor = true;
+            var type = colorObj.GetColorType();
 
-            if (current == ColorManager.Color_Type.Blue) {
+            if (type == ColorManager.Color_Type.Blue) {
+
+                current = type;
+                manager.TurnMonochrome(current);
+                rend.material.color = ColorManager.GetOriginalColor(current);
+                isColor = true;
+
                 collision.GetComponent<Collider2D>().isTrigger = false;
                 Death();
             }
         }
+
+        grabedObject ??= collision.GetComponent<GrabedObject>();
     }
+    private void OnTriggerExit2D(Collider2D collision) {
+            if (grabedObject == collision.GetComponent<GrabedObject>()) {
+                grabedObject?.GrabEnd();
+                grabedObject = null;
+            }
+        }
+    
 
     // ControllColorÅ@Ç©ÇÁåƒÇ—èoÇµ /////////////////////////////////////
     ControllColor con_color;
