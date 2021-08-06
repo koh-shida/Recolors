@@ -50,7 +50,9 @@ public class Player : MonoBehaviour {
 
         inputActions.Player.Jump.started += JumpStarted;
         inputActions.Player.UseAbility.started += UseAbilityStarted;
-        inputActions.Player.UseAbility.canceled += UseAbilityCanceled; ;
+        inputActions.Player.UseAbility.canceled += UseAbilityCanceled;
+        //inputActions.Player.
+
 
     }
 
