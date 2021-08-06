@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(GroundChecker))]
+[RequireComponent(typeof(ControllColor))]
 public class Player : MonoBehaviour {
     [SerializeField]
     float speed = 10;
@@ -53,7 +54,8 @@ public class Player : MonoBehaviour {
         inputActions.Player.UseAbility.canceled += UseAbilityCanceled;
         //inputActions.Player.
 
-
+        con_color = GetComponent<ControllColor>();
+        con_color.SetInputActions(inputActions);
     }
 
 
@@ -173,5 +175,20 @@ public class Player : MonoBehaviour {
                 Death();
             }
         }
+    }
+
+    // ControllColorÅ@Ç©ÇÁåƒÇ—èoÇµ /////////////////////////////////////
+    ControllColor con_color;
+
+    public RecolorsInputAction GetInputAction()
+    {
+        return inputActions;
+    }
+
+    // êFÇê›íË
+    public void SetPlayerColor(ColorManager.Color_Type c_type)
+    {
+        current = c_type;
+        rend.material.color = ColorManager.GetOriginalColor(current);
     }
 }
