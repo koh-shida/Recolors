@@ -156,7 +156,7 @@ public class Player : MonoBehaviour {
         var value = inputActions.Player.Move.ReadValue<Vector2>();
 
         if (grabedObject!=null&& grabedObject.IsGrab) {
-            grabedObject.GrabMove( new Vector2(value.x/10.0f, 0));
+            grabedObject.GrabMove(value.x );
             return;
         }
         var move = new Vector2(value.x * speed, 0);

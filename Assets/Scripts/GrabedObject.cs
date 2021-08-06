@@ -15,9 +15,20 @@ public class GrabedObject : MonoBehaviour
 
     public bool IsGrab { get; private set; }
 
-    public void GrabMove(Vector2 move) {
-        rig.MovePosition(rig.position+ move);
-        graber.MovePosition(graber.position+ move);
+    public void GrabMove(float move) {
+        var g1 = rig.velocity;
+        var g2 = graber.velocity;
+        g1.x = move;
+        g2.x = move;
+
+        if (rig.position.x > graber.position.x && move < 0 ||
+            rig.position.x < graber.position.x && move > 0) {
+            g1.x *= 1.5f;
+        }
+
+        rig.velocity=g1;
+        graber.velocity=g2;
+
     }
     public void GrabBegin(Rigidbody2D transform) {
         GrabEnd();
