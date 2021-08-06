@@ -6,6 +6,8 @@ public class ControllColor : MonoBehaviour
 {
     ColorManager color_manager;
 
+    GameObject[] Circles;
+
     // 色を持っているか持ってないか
     bool[] isHaving;
 
@@ -30,6 +32,8 @@ public class ControllColor : MonoBehaviour
         {
             isHaving[i] = false;
         }
+
+        // サークル取得
     }
 
     // Update is called once per frame

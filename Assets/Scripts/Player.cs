@@ -32,11 +32,13 @@ public class Player : MonoBehaviour {
 
     ColorManager manager;
     Vector3 respawnPos;
+    Vector3 camera_respawnPos;
 
     Renderer rend;
 
     void Awake() {
         respawnPos = transform.position;
+        camera_respawnPos = Camera.main.transform.position;
 
         isColor = false;
 
@@ -156,9 +158,7 @@ public class Player : MonoBehaviour {
 
     void Death() {
         transform.position = respawnPos;
-        var cameraPos = Camera.main.transform.position;
-        cameraPos.x = respawnPos.x;
-        Camera.main.transform.position = cameraPos;
+        Camera.main.transform.position = camera_respawnPos;
     }
 
 
