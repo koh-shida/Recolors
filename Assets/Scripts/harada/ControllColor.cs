@@ -2,11 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 色を切り替えたりするクラス、UIとのやり取りもします
+/// </summary>
 public class ControllColor : MonoBehaviour
 {
     ColorManager color_manager;
 
+    // UIサークル用の情報
     GameObject[] Circles;
+    GameObject[] MonoCircles;
+    Vector3[] c_SettingPos;
+
+    Vector3 Vanish_Pos;
 
     // 色を持っているか持ってないか
     bool[] isHaving;
@@ -28,12 +36,45 @@ public class ControllColor : MonoBehaviour
         // ブール初期化
         isHaving = new bool[(int)ColorManager.Color_Type.c_Max];
 
-        for(var i = 0; i < (int)ColorManager.Color_Type.c_Max; ++i)
+        // サークル初期化
+        Vanish_Pos = new Vector3(1000f, 1000f, 0);
+
+        Circles = new GameObject[(int)ColorManager.Color_Type.c_Max];
+        MonoCircles = new GameObject[(int)ColorManager.Color_Type.c_Max];
+        c_SettingPos = new Vector3[(int)ColorManager.Color_Type.c_Max];
+
+        GameObject temp_g = Resources.Load<GameObject>("Sprites/Monochrome_g");
+
+        GameObject canvas = GameObject.Find("Canvas");
+
+        for (var i = 0; i < (int)ColorManager.Color_Type.c_Max; ++i)
         {
             isHaving[i] = false;
+
+            ColorManager.Color_Type temp = (ColorManager.Color_Type)i;
+            Circles[i] = canvas.transform.Find(temp.ToString() + "Circle").gameObject;
+
+            // サークルがある場合
+            if (Circles[i] != null)
+            {
+                c_SettingPos[i] = Circles[i].transform.position;
+
+                // 最初は白黒を配置する
+                MonoCircles[i] = Instantiate<GameObject>(temp_g);
+                MonoCircles[i].transform.parent = canvas.transform;
+
+                MonoCircles[i].transform.position = c_SettingPos[i];
+                Circles[i].transform.position = Vanish_Pos;
+            }
+            else
+            {
+                MonoCircles[i] = Instantiate<GameObject>(temp_g, Vanish_Pos, Quaternion.identity);
+            }
         }
 
-        // サークル取得
+
+
+
     }
 
     // Update is called once per frame
