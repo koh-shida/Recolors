@@ -26,15 +26,92 @@ public class Player : MonoBehaviour {
 
     GameObject foot;
 
+    bool isColor = false;
+    ColorManager.Color_Type current;
+
+    ColorManager manager;
+    Vector3 respawnPos;
+
+    Renderer rend;
+
     void Awake() {
+        respawnPos = transform.position;
+
+        isColor = false;
+
         foot = transform.GetChild(0).gameObject;
 
         rigid = GetComponent<Rigidbody2D>();
         groundChecker = GetComponent<GroundChecker>();
 
+        rend = GetComponent<Renderer>();
+
         inputActions = new RecolorsInputAction();
 
         inputActions.Player.Jump.started += JumpStarted;
+        inputActions.Player.UseAbility.started += UseAbilityStarted;
+        inputActions.Player.UseAbility.canceled += UseAbilityCanceled;
+        //inputActions.Player.
+
+
+    }
+
+
+    private void Start() {
+        manager = GameObject.Find("GameMaster").GetComponent<ColorManager>();
+    }
+
+    private void UseAbilityStarted(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        if (!isColor) {
+            return;
+        }
+        switch (current) {
+            case ColorManager.Color_Type.Blue:
+                var scale=transform.localScale;
+                scale.y = 0.3f;
+                transform.localScale = scale;
+                break;
+            case ColorManager.Color_Type.Red:
+                break;
+            case ColorManager.Color_Type.Yellow:
+                break;
+            case ColorManager.Color_Type.Orange:
+                break;
+            case ColorManager.Color_Type.Purple:
+                break;
+            case ColorManager.Color_Type.Green:
+                break;
+            case ColorManager.Color_Type.c_Max:
+                break;
+            default:
+                break;
+        }
+    }
+    private void UseAbilityCanceled(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        if (!isColor) {
+            return;
+        }
+        switch (current) {
+            case ColorManager.Color_Type.Blue:
+                var scale = transform.localScale;
+                scale.y = 1.0f;
+                transform.localScale = scale;
+                break;
+            case ColorManager.Color_Type.Red:
+                break;
+            case ColorManager.Color_Type.Yellow:
+                break;
+            case ColorManager.Color_Type.Orange:
+                break;
+            case ColorManager.Color_Type.Purple:
+                break;
+            case ColorManager.Color_Type.Green:
+                break;
+            case ColorManager.Color_Type.c_Max:
+                break;
+            default:
+                break;
+        }
     }
 
     void OnDisable() => inputActions.Disable();
@@ -73,5 +150,28 @@ public class Player : MonoBehaviour {
 
         rigid.AddForce(moveForce);
 
+    }
+
+    void Death() {
+        transform.position = respawnPos;
+        var cameraPos = Camera.main.transform.position;
+        cameraPos.x = respawnPos.x;
+        Camera.main.transform.position = cameraPos;
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        var colorObj=collision.GetComponent<ColorObject>();
+        if (colorObj != null) {
+            current = colorObj.GetColorType();
+            manager.TurnMonochrome(current);
+            rend.material.color = ColorManager.GetOriginalColor(current);
+            isColor = true;
+
+            if (current == ColorManager.Color_Type.Blue) {
+                collision.GetComponent<Collider2D>().isTrigger = false;
+                Death();
+            }
+        }
     }
 }
